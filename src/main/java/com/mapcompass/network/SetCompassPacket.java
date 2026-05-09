@@ -61,7 +61,10 @@ public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension, Strin
             }
 
             GlobalPos globalPos = GlobalPos.of(packet.dimension(), new BlockPos(packet.x(), 64, packet.z()));
-            LodestoneTracker tracker = new LodestoneTracker(Optional.of(globalPos), false);
+            // tracked=true: required for Create Aeronautics Navigation Table to read coordinates.
+            // Vanilla compass in hand will spin after a few ticks if no real lodestone exists,
+            // but inventoryTick is not called on block inventories so the tracker persists in the Navigation Table.
+            LodestoneTracker tracker = new LodestoneTracker(Optional.of(globalPos), true);
 
             ItemStack newCompass = new ItemStack(Items.COMPASS);
             newCompass.set(DataComponents.LODESTONE_TRACKER, tracker);
