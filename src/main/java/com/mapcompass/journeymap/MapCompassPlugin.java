@@ -33,19 +33,20 @@ public class MapCompassPlugin implements IClientPlugin {
     private void onFullscreenPopupMenu(PopupMenuEvent.FullscreenPopupMenuEvent event) {
         ResourceKey<Level> dimension = event.getFullscreen().getUiState().dimension;
         event.getPopupMenu().addMenuItem("mapcompass.action.set_compass", blockPos ->
-            PacketDistributor.sendToServer(new SetCompassPacket(blockPos.getX(), blockPos.getZ(), dimension))
+            PacketDistributor.sendToServer(new SetCompassPacket(blockPos.getX(), blockPos.getZ(), dimension, ""))
         );
     }
 
     private void onWaypointPopupMenu(PopupMenuEvent.WaypointPopupMenuEvent event) {
         int x = event.getWaypoint().getX();
         int z = event.getWaypoint().getZ();
+        String name = event.getWaypoint().getName();
         ResourceKey<Level> dimension = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.parse(event.getWaypoint().getPrimaryDimension())
         );
         event.getPopupMenu().addMenuItem("mapcompass.action.set_compass", blockPos ->
-            PacketDistributor.sendToServer(new SetCompassPacket(x, z, dimension))
+            PacketDistributor.sendToServer(new SetCompassPacket(x, z, dimension, name))
         );
     }
 }

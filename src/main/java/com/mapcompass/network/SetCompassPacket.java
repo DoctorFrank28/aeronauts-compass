@@ -20,7 +20,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Optional;
 
-public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension) implements CustomPacketPayload {
+public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension, String name) implements CustomPacketPayload {
 
     public static final ResourceLocation ID_LOCATION = ResourceLocation.fromNamespaceAndPath("mapcompass", "set_compass");
     public static final Type<SetCompassPacket> TYPE = new Type<>(ID_LOCATION);
@@ -34,13 +34,15 @@ public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension) imple
         buf.writeInt(packet.x());
         buf.writeInt(packet.z());
         buf.writeResourceKey(packet.dimension());
+        buf.writeUtf(packet.name());
     }
 
     private static SetCompassPacket decode(RegistryFriendlyByteBuf buf) {
         int x = buf.readInt();
         int z = buf.readInt();
         ResourceKey<Level> dimension = buf.readResourceKey(Registries.DIMENSION);
-        return new SetCompassPacket(x, z, dimension);
+        String name = buf.readUtf();
+        return new SetCompassPacket(x, z, dimension, name);
     }
 
     @Override
@@ -63,6 +65,11 @@ public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension) imple
 
             ItemStack newCompass = new ItemStack(Items.COMPASS);
             newCompass.set(DataComponents.LODESTONE_TRACKER, tracker);
+
+            Component displayName = packet.name().isEmpty()
+                ? Component.translatable("mapcompass.item.compass_name", packet.x(), packet.z())
+                : Component.literal(packet.name());
+            newCompass.set(DataComponents.CUSTOM_NAME, displayName);
 
             player.setItemInHand(hand, newCompass);
             player.sendSystemMessage(Component.translatable("mapcompass.message.compass_set", packet.x(), packet.z()));
