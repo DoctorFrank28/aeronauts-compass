@@ -1,0 +1,5 @@
+{
+  "mapcompass.action.set_compass": "Set Compass",
+  "mapcompass.message.compass_set": "Compass set to X: %d, Z: %d",
+  "mapcompass.message.no_compass": "You must hold a compass in your hand!"
+}

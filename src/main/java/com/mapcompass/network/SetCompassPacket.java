@@ -54,22 +54,18 @@ public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension) imple
 
             InteractionHand hand = getCompassHand(player);
             if (hand == null) {
-                player.sendSystemMessage(Component.literal("Devi tenere una bussola in mano!"));
+                player.sendSystemMessage(Component.translatable("mapcompass.message.no_compass"));
                 return;
             }
 
-            BlockPos targetPos = new BlockPos(packet.x(), 64, packet.z());
-            GlobalPos globalPos = GlobalPos.of(packet.dimension(), targetPos);
-
+            GlobalPos globalPos = GlobalPos.of(packet.dimension(), new BlockPos(packet.x(), 64, packet.z()));
             LodestoneTracker tracker = new LodestoneTracker(Optional.of(globalPos), false);
 
             ItemStack newCompass = new ItemStack(Items.COMPASS);
             newCompass.set(DataComponents.LODESTONE_TRACKER, tracker);
 
             player.setItemInHand(hand, newCompass);
-            player.sendSystemMessage(Component.literal(
-                String.format("Bussola impostata su X: %d, Z: %d", packet.x(), packet.z())
-            ));
+            player.sendSystemMessage(Component.translatable("mapcompass.message.compass_set", packet.x(), packet.z()));
         });
     }
 

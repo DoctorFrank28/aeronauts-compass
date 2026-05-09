@@ -6,7 +6,9 @@ import journeymap.api.v2.client.IClientPlugin;
 import journeymap.api.v2.client.event.PopupMenuEvent;
 import journeymap.api.v2.common.JourneyMapPlugin;
 import journeymap.api.v2.common.event.FullscreenEventRegistry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -25,12 +27,25 @@ public class MapCompassPlugin implements IClientPlugin {
     public void initialize(IClientAPI api) {
         this.clientAPI = api;
         FullscreenEventRegistry.FULLSCREEN_POPUP_MENU_EVENT.subscribe("mapcompass", this::onFullscreenPopupMenu);
+        FullscreenEventRegistry.WAYPOINT_POPUP_MENU_EVENT.subscribe("mapcompass", this::onWaypointPopupMenu);
     }
 
     private void onFullscreenPopupMenu(PopupMenuEvent.FullscreenPopupMenuEvent event) {
         ResourceKey<Level> dimension = event.getFullscreen().getUiState().dimension;
-        event.getPopupMenu().addMenuItem("Imposta Bussola", blockPos ->
+        event.getPopupMenu().addMenuItem("mapcompass.action.set_compass", blockPos ->
             PacketDistributor.sendToServer(new SetCompassPacket(blockPos.getX(), blockPos.getZ(), dimension))
+        );
+    }
+
+    private void onWaypointPopupMenu(PopupMenuEvent.WaypointPopupMenuEvent event) {
+        int x = event.getWaypoint().getX();
+        int z = event.getWaypoint().getZ();
+        ResourceKey<Level> dimension = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.parse(event.getWaypoint().getPrimaryDimension())
+        );
+        event.getPopupMenu().addMenuItem("mapcompass.action.set_compass", blockPos ->
+            PacketDistributor.sendToServer(new SetCompassPacket(x, z, dimension))
         );
     }
 }
