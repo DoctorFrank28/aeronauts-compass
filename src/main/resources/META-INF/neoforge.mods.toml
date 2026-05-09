@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+    modId = "${mod_id}"
+    version = "${mod_version}"
+    displayName = "${mod_name}"
+    description = '''${mod_description}'''
+    authors = "${mod_authors}"
+
+[[dependencies.mapcompass]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[21.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.mapcompass]]
+    modId = "minecraft"
+    type = "required"
+    versionRange = "[1.21.1,1.22)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.mapcompass]]
+    modId = "journeymap"
+    type = "optional"
+    versionRange = "*"
+    ordering = "NONE"
+    side = "CLIENT"
