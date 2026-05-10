@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.item.component.MapDecorations;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -66,13 +67,24 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
         ItemStack current = menu.getSlot(1).getItem();
         if (ItemStack.matches(current, lastMapStack)) return;
         lastMapStack = current.copy();
-        if (current.isEmpty()) return;
+        if (current.isEmpty()) {
+            xField.setEditable(true);
+            zField.setEditable(true);
+            return;
+        }
         MapDecorations decorations = current.get(DataComponents.MAP_DECORATIONS);
         if (decorations == null) return;
         MapDecorations.Entry entry = decorations.decorations().get("+");
         if (entry == null) return;
         xField.setValue(String.valueOf((int) entry.x()));
         zField.setValue(String.valueOf((int) entry.z()));
+        xField.setEditable(false);
+        zField.setEditable(false);
+        // suggerisci nome dalla mappa solo se il campo è vuoto
+        if (nameField.getValue().isBlank()) {
+            Component mapName = current.get(DataComponents.CUSTOM_NAME);
+            if (mapName != null) nameField.setValue(mapName.getString());
+        }
     }
 
     private void checkCompassSlot() {
@@ -113,6 +125,15 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        // Ghost hint: render item icon + dark overlay when slot is empty
+        if (menu.getSlot(0).getItem().isEmpty()) {
+            graphics.renderFakeItem(new ItemStack(Items.COMPASS), leftPos + 8, topPos + 26);
+            graphics.fill(leftPos + 8, topPos + 26, leftPos + 24, topPos + 42, 0xA0000000);
+        }
+        if (menu.getSlot(1).getItem().isEmpty()) {
+            graphics.renderFakeItem(new ItemStack(Items.FILLED_MAP), leftPos + 28, topPos + 26);
+            graphics.fill(leftPos + 28, topPos + 26, leftPos + 44, topPos + 42, 0xA0000000);
+        }
     }
 
     @Override
