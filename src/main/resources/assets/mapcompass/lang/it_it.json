@@ -1,6 +1,9 @@
 {
   "mapcompass.action.set_compass": "Imposta Bussola",
+  "mapcompass.action.apply": "Applica",
   "mapcompass.message.compass_set": "Bussola impostata su X: %d, Z: %d",
   "mapcompass.message.no_compass": "Devi tenere una bussola in mano!",
-  "mapcompass.item.compass_name": "Bussola [X: %d, Z: %d]"
+  "mapcompass.item.compass_name": "Bussola [X: %d, Z: %d]",
+  "mapcompass.label.name": "Nome:",
+  "block.mapcompass.navigator_table": "Tavolo del Navigatore"
 }

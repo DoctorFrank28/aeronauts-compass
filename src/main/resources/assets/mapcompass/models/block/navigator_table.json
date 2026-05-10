@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "up":     "mapcompass:block/navigator_table_top",
+    "down":   "mapcompass:block/navigator_table_bottom",
+    "north":  "mapcompass:block/navigator_table_side",
+    "south":  "mapcompass:block/navigator_table_side",
+    "east":   "mapcompass:block/navigator_table_side",
+    "west":   "mapcompass:block/navigator_table_side",
+    "particle": "mapcompass:block/navigator_table_side"
+  }
+}

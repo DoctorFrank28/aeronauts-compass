@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:cartography_table" },
+    { "item": "minecraft:compass" }
+  ],
+  "result": {
+    "id": "mapcompass:navigator_table",
+    "count": 1
+  }
+}

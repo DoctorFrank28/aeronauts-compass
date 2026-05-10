@@ -1,5 +1,9 @@
 package com.mapcompass;
 
+import com.mapcompass.init.ModBlockEntities;
+import com.mapcompass.init.ModBlocks;
+import com.mapcompass.init.ModMenuTypes;
+import com.mapcompass.network.ApplyCompassPacket;
 import com.mapcompass.network.SetCompassPacket;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -11,15 +15,17 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public class MapCompass {
 
     public MapCompass(IEventBus modEventBus, ModContainer modContainer) {
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModBlocks.ITEMS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
+        ModMenuTypes.MENU_TYPES.register(modEventBus);
+
         modEventBus.addListener(this::registerPackets);
     }
 
     private void registerPackets(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
-        registrar.playToServer(
-            SetCompassPacket.TYPE,
-            SetCompassPacket.STREAM_CODEC,
-            SetCompassPacket::handleOnServer
-        );
+        registrar.playToServer(SetCompassPacket.TYPE, SetCompassPacket.STREAM_CODEC, SetCompassPacket::handleOnServer);
+        registrar.playToServer(ApplyCompassPacket.TYPE, ApplyCompassPacket.STREAM_CODEC, ApplyCompassPacket::handleOnServer);
     }
 }
