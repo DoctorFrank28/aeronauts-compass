@@ -1,6 +1,23 @@
 """Generate Navigator's Table block and GUI textures."""
 import struct, zlib, os
 
+def write_png_rgba(pixels, width, height, path):
+    """Write RGBA PNG (color type 6, 4 bytes per pixel)."""
+    def chunk(tag, data):
+        buf = tag + data
+        return struct.pack('>I', len(data)) + buf + struct.pack('>I', zlib.crc32(buf) & 0xffffffff)
+    raw = b''
+    for row in pixels:
+        raw += b'\x00'
+        for r, g, b, a in row:
+            raw += bytes([r, g, b, a])
+    sig = b'\x89PNG\r\n\x1a\n'
+    ihdr = chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 6, 0, 0, 0))
+    idat = chunk(b'IDAT', zlib.compress(raw, 9))
+    iend = chunk(b'IEND', b'')
+    with open(path, 'wb') as f:
+        f.write(sig + ihdr + idat + iend)
+
 def write_png(pixels, width, height, path):
     def chunk(tag, data):
         buf = tag + data
@@ -134,6 +151,67 @@ def make_gui():
 
     return p
 
+# --- Slot hint icons (16×16 RGBA, ~40% opaque, greyscale) ---
+# Pixel art modelled after the vanilla MC compass and filled_map item textures.
+def make_hint_compass():
+    A = 105  # ~41% opacity
+    T  = (  0,   0,   0,   0)   # transparent corner
+    def g(v): return (v, v, v, A)
+    FR = g( 52)   # outer frame ring
+    HL = g( 78)   # inner frame highlight
+    BG = g(218)   # face background
+    NB = g( 92)   # N-needle body (desaturated red → dark grey)
+    NA = g( 72)   # N-needle arrowhead tip
+    SN = g(195)   # S-needle body (was white/grey → lighter grey)
+    SA = g(210)   # S-needle tip
+    CT = g( 45)   # centre pivot
+    return [
+        [T,  T,  T,  T,  FR, FR, FR, FR, FR, FR, FR, FR, T,  T,  T,  T ],
+        [T,  T,  T,  FR, HL, HL, BG, BG, BG, BG, HL, HL, FR, T,  T,  T ],
+        [T,  T,  FR, HL, BG, BG, BG, NA, NA, BG, BG, BG, HL, FR, T,  T ],
+        [T,  FR, HL, BG, BG, BG, NB, NA, NA, NB, BG, BG, BG, HL, FR, T ],
+        [FR, HL, BG, BG, BG, BG, NB, NB, NB, NB, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, NB, NB, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, NB, NB, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, CT, CT, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, CT, CT, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, SN, SN, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, SN, SN, BG, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, SN, SN, SN, SN, BG, BG, BG, BG, HL, FR],
+        [FR, HL, BG, BG, BG, BG, BG, SA, SA, BG, BG, BG, BG, BG, HL, FR],
+        [T,  FR, HL, BG, BG, BG, BG, SA, SA, BG, BG, BG, BG, HL, FR, T ],
+        [T,  T,  FR, HL, HL, BG, BG, SA, SA, BG, HL, HL, FR, T,  T,  T ],
+        [T,  T,  T,  T,  FR, FR, FR, FR, FR, FR, FR, FR, T,  T,  T,  T ],
+    ]
+
+def make_hint_map():
+    A = 105
+    def g(v): return (v, v, v, A)
+    BO = g( 55)   # outer border
+    BI = g( 78)   # inner border / margin
+    BG = g(210)   # paper background
+    LA = g(185)   # land feature
+    WA = g(150)   # water feature
+    MK = g( 65)   # location marker cross
+    return [
+        [BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO],
+        [BO, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BO],
+        [BO, BI, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BI, BO],
+        [BO, BI, BG, LA, LA, LA, LA, WA, WA, WA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, LA, LA, WA, WA, WA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, MK, LA, WA, WA, WA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, MK, MK, MK, BG, BG, BG, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, MK, LA, BG, BG, BG, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, LA, LA, LA, LA, LA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, LA, LA, LA, LA, LA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, WA, WA, WA, WA, LA, LA, LA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, WA, WA, WA, WA, LA, LA, LA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, LA, LA, LA, LA, LA, LA, LA, LA, LA, LA, BG, BI, BO],
+        [BO, BI, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BI, BO],
+        [BO, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BI, BO],
+        [BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO, BO],
+    ]
+
 # --- Write files ---
 base_block = r"src\main\resources\assets\mapcompass\textures\block"
 base_gui   = r"src\main\resources\assets\mapcompass\textures\gui"
@@ -144,4 +222,6 @@ write_png(make_top(),    16,  16,  os.path.join(base_block, "navigator_table_top
 write_png(make_side(),   16,  16,  os.path.join(base_block, "navigator_table_side.png"))
 write_png(make_bottom(), 16,  16,  os.path.join(base_block, "navigator_table_bottom.png"))
 write_png(make_gui(),    256, 256, os.path.join(base_gui,   "navigator_table.png"))
+write_png_rgba(make_hint_compass(), 16, 16, os.path.join(base_gui, "slot_hint_compass.png"))
+write_png_rgba(make_hint_map(),     16, 16, os.path.join(base_gui, "slot_hint_map.png"))
 print("All textures written.")

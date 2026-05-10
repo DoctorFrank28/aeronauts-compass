@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.item.component.MapDecorations;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -21,6 +20,10 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
 
     private static final ResourceLocation TEXTURE =
         ResourceLocation.fromNamespaceAndPath("mapcompass", "textures/gui/navigator_table.png");
+    private static final ResourceLocation HINT_COMPASS =
+        ResourceLocation.fromNamespaceAndPath("mapcompass", "textures/gui/slot_hint_compass.png");
+    private static final ResourceLocation HINT_MAP =
+        ResourceLocation.fromNamespaceAndPath("mapcompass", "textures/gui/slot_hint_map.png");
 
     private EditBox xField;
     private EditBox zField;
@@ -125,16 +128,11 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        // Ghost hint: icon + parchment overlay (~60% opacity) to simulate transparency
-        // renderFakeItem ignores alpha, so we overlay the bg colour instead
-        if (menu.getSlot(0).getItem().isEmpty()) {
-            graphics.renderFakeItem(new ItemStack(Items.COMPASS), leftPos + 8, topPos + 26);
-            graphics.fill(leftPos + 8, topPos + 26, leftPos + 24, topPos + 42, 0x99E8D5A3);
-        }
-        if (menu.getSlot(1).getItem().isEmpty()) {
-            graphics.renderFakeItem(new ItemStack(Items.FILLED_MAP), leftPos + 28, topPos + 26);
-            graphics.fill(leftPos + 28, topPos + 26, leftPos + 44, topPos + 42, 0x99E8D5A3);
-        }
+        // Slot hints: custom RGBA greyscale icons (~40% opaque) blit'd directly
+        if (menu.getSlot(0).getItem().isEmpty())
+            graphics.blit(HINT_COMPASS, leftPos + 8, topPos + 26, 0, 0.0f, 0.0f, 16, 16, 16, 16);
+        if (menu.getSlot(1).getItem().isEmpty())
+            graphics.blit(HINT_MAP, leftPos + 28, topPos + 26, 0, 0.0f, 0.0f, 16, 16, 16, 16);
     }
 
     @Override
