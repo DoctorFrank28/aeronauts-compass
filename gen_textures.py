@@ -117,8 +117,9 @@ def make_gui():
             for dx in range(1, 17):
                 p[sy+dy][sx+dx] = bg_int
 
-    # compass slot at (7,25)
-    draw_slot(7, 25, (188, 162, 108))
+    # compass slot at (7,25); map slot at (27,25)
+    draw_slot(7,  25, (188, 162, 108))
+    draw_slot(27, 25, (188, 162, 108))
     # player inventory slots
     for row in range(3):
         for col in range(9):

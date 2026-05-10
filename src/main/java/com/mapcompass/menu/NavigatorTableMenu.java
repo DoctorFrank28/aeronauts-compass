@@ -19,7 +19,7 @@ public class NavigatorTableMenu extends AbstractContainerMenu {
 
     // Client-side
     public NavigatorTableMenu(int id, Inventory playerInventory, FriendlyByteBuf buf) {
-        this(id, playerInventory, new SimpleContainer(1), buf.readBlockPos());
+        this(id, playerInventory, new SimpleContainer(2), buf.readBlockPos());
     }
 
     // Server-side
@@ -28,11 +28,17 @@ public class NavigatorTableMenu extends AbstractContainerMenu {
         this.container = container;
         this.blockPos = blockPos;
 
-        // Compass slot (item pos x=8, y=26 → bg at 7,25)
+        // Compass slot at (8,26); map slot at (28,26)
         addSlot(new Slot(container, 0, 8, 26) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(Items.COMPASS);
+            }
+        });
+        addSlot(new Slot(container, 1, 28, 26) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(Items.FILLED_MAP);
             }
         });
 
@@ -58,10 +64,18 @@ public class NavigatorTableMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
-        if (index == 0) {
-            if (!moveItemStackTo(stack, 1, slots.size(), true)) return ItemStack.EMPTY;
+        if (index < 2) {
+            // table slot → player inventory
+            if (!moveItemStackTo(stack, 2, slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            if (!moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
+            // player inventory → appropriate table slot
+            if (stack.is(Items.COMPASS)) {
+                if (!moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
+            } else if (stack.is(Items.FILLED_MAP)) {
+                if (!moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
+            } else {
+                return ItemStack.EMPTY;
+            }
         }
         if (stack.isEmpty()) slot.set(ItemStack.EMPTY);
         else slot.setChanged();

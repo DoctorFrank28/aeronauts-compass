@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.LodestoneTracker;
+import net.minecraft.world.item.component.MapDecorations;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTableMenu> {
@@ -25,6 +26,7 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     private EditBox nameField;
 
     private ItemStack lastCompassStack = ItemStack.EMPTY;
+    private ItemStack lastMapStack = ItemStack.EMPTY;
 
     public NavigatorTableScreen(NavigatorTableMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -37,13 +39,13 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     protected void init() {
         super.init();
 
-        xField = new EditBox(font, leftPos + 44, topPos + 16, 52, 12, Component.literal("X"));
+        xField = new EditBox(font, leftPos + 58, topPos + 16, 52, 12, Component.literal("X"));
         xField.setMaxLength(8);
         xField.setFilter(s -> s.isEmpty() || s.equals("-") || s.matches("-?\\d{0,7}"));
         xField.setValue("0");
         addRenderableWidget(xField);
 
-        zField = new EditBox(font, leftPos + 44, topPos + 30, 52, 12, Component.literal("Z"));
+        zField = new EditBox(font, leftPos + 58, topPos + 30, 52, 12, Component.literal("Z"));
         zField.setMaxLength(8);
         zField.setFilter(s -> s.isEmpty() || s.equals("-") || s.matches("-?\\d{0,7}"));
         zField.setValue("0");
@@ -58,6 +60,19 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
                 .bounds(leftPos + 116, topPos + 58, 52, 12)
                 .build()
         );
+    }
+
+    private void checkMapSlot() {
+        ItemStack current = menu.getSlot(1).getItem();
+        if (ItemStack.matches(current, lastMapStack)) return;
+        lastMapStack = current.copy();
+        if (current.isEmpty()) return;
+        MapDecorations decorations = current.get(DataComponents.MAP_DECORATIONS);
+        if (decorations == null) return;
+        MapDecorations.Entry entry = decorations.decorations().get("+");
+        if (entry == null) return;
+        xField.setValue(String.valueOf((int) entry.x()));
+        zField.setValue(String.valueOf((int) entry.z()));
     }
 
     private void checkCompassSlot() {
@@ -103,9 +118,9 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, titleLabelX, titleLabelY, 0x4A2E0A, false);
-        graphics.drawString(font, "X:", 36, 19, 0x4A2E0A, false);
-        graphics.drawString(font, "Z:", 36, 33, 0x4A2E0A, false);
-        graphics.drawString(font, Component.translatable("mapcompass.label.name"), 36, 49, 0x4A2E0A, false);
+        graphics.drawString(font, "X:", 50, 19, 0x4A2E0A, false);
+        graphics.drawString(font, "Z:", 50, 33, 0x4A2E0A, false);
+        graphics.drawString(font, Component.translatable("mapcompass.label.name"), 50, 49, 0x4A2E0A, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x4A2E0A, false);
     }
 
@@ -124,6 +139,7 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         checkCompassSlot();
+        checkMapSlot();
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
     }

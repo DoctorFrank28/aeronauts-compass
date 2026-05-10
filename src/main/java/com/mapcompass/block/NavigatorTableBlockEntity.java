@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class NavigatorTableBlockEntity extends BlockEntity implements MenuProvider {
 
-    public final SimpleContainer inventory = new SimpleContainer(1);
+    public final SimpleContainer inventory = new SimpleContainer(2);
 
     public NavigatorTableBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.NAVIGATOR_TABLE.get(), pos, state);

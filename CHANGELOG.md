@@ -1,5 +1,12 @@
 # Changelog — Aeronaut's Compass
 
+## [1.1.0] — 2026-05-10
+
+### Added
+- **Treasure map support** — place a filled exploration map in the new map slot of the Navigator's Table; X / Z coordinates are read automatically from the map and pre-filled into the fields. Press Apply as usual to set the compass.
+
+---
+
 ## [1.0.0] — 2026-05-10
 
 ### Added
