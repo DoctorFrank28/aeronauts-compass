@@ -30,5 +30,12 @@ license = "MIT"
     ordering = "NONE"
     side = "CLIENT"
 
+[[dependencies.mapcompass]]
+    modId = "aeronautics_bundled"
+    type = "optional"
+    versionRange = "*"
+    ordering = "NONE"
+    side = "BOTH"
+
 [[mixins]]
     config = "mapcompass.mixins.json"
