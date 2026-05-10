@@ -52,7 +52,7 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
         zField.setValue("0");
         addRenderableWidget(zField);
 
-        nameField = new EditBox(font, leftPos + 68, topPos + 46, 96, 12, Component.literal("Name"));
+        nameField = new EditBox(font, leftPos + 86, topPos + 46, 82, 12, Component.literal("Name"));
         nameField.setMaxLength(32);
         addRenderableWidget(nameField);
 
