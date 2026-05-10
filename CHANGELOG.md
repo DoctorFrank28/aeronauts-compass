@@ -4,6 +4,13 @@
 
 ### Added
 - **Treasure map support** — place a filled exploration map in the new map slot of the Navigator's Table; X / Z coordinates are read automatically from the map and pre-filled into the fields. Press Apply as usual to set the compass.
+  - Map coordinates lock the X / Z fields — they cannot be edited while the map is in the slot
+  - If the map has a custom name it is suggested in the Name field (still editable)
+  - Map always takes priority: inserting a pre-configured compass does not override the map's coordinates
+  - Ghost icons in empty slots hint what item goes where
+
+### Fixed
+- Name label no longer overlaps the Name text field
 
 ---
 
