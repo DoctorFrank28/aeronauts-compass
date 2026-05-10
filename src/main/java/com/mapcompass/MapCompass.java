@@ -3,6 +3,7 @@ package com.mapcompass;
 import com.mapcompass.init.ModBlockEntities;
 import com.mapcompass.init.ModBlocks;
 import com.mapcompass.init.ModMenuTypes;
+import com.mapcompass.init.ModRecipes;
 import com.mapcompass.network.ApplyCompassPacket;
 import com.mapcompass.network.SetCompassPacket;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -21,6 +22,7 @@ public class MapCompass {
         ModBlocks.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
         ModMenuTypes.MENU_TYPES.register(modEventBus);
+        ModRecipes.RECIPE_SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(this::registerPackets);
         modEventBus.addListener(this::addCreativeTab);
