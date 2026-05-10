@@ -25,15 +25,12 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     private EditBox nameField;
 
     private ItemStack lastCompassStack = ItemStack.EMPTY;
-    private int compassTargetX = 0;
-    private int compassTargetZ = 0;
-    private boolean hasCompassTarget = false;
 
     public NavigatorTableScreen(NavigatorTableMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.imageWidth  = 176;
         this.imageHeight = 166;
-        this.inventoryLabelY = 72;
+        this.inventoryLabelY = 74;
     }
 
     @Override
@@ -46,19 +43,19 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
         xField.setValue("0");
         addRenderableWidget(xField);
 
-        zField = new EditBox(font, leftPos + 44, topPos + 32, 52, 12, Component.literal("Z"));
+        zField = new EditBox(font, leftPos + 44, topPos + 30, 52, 12, Component.literal("Z"));
         zField.setMaxLength(8);
         zField.setFilter(s -> s.isEmpty() || s.equals("-") || s.matches("-?\\d{0,7}"));
         zField.setValue("0");
         addRenderableWidget(zField);
 
-        nameField = new EditBox(font, leftPos + 72, topPos + 47, 88, 12, Component.literal("Name"));
+        nameField = new EditBox(font, leftPos + 68, topPos + 46, 96, 12, Component.literal("Name"));
         nameField.setMaxLength(32);
         addRenderableWidget(nameField);
 
         addRenderableWidget(
             Button.builder(Component.translatable("mapcompass.action.apply"), btn -> applyCompass())
-                .bounds(leftPos + 120, topPos + 60, 44, 14)
+                .bounds(leftPos + 116, topPos + 58, 52, 12)
                 .build()
         );
     }
@@ -75,18 +72,12 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
         LodestoneTracker tracker = stack.get(DataComponents.LODESTONE_TRACKER);
         if (tracker != null && tracker.target().isPresent()) {
             BlockPos pos = tracker.target().get().pos();
-            compassTargetX = pos.getX();
-            compassTargetZ = pos.getZ();
-            hasCompassTarget = true;
-            xField.setValue(String.valueOf(compassTargetX));
-            zField.setValue(String.valueOf(compassTargetZ));
-        } else {
-            hasCompassTarget = false;
-            if (stack.isEmpty()) {
-                xField.setValue("0");
-                zField.setValue("0");
-                nameField.setValue("");
-            }
+            xField.setValue(String.valueOf(pos.getX()));
+            zField.setValue(String.valueOf(pos.getZ()));
+        } else if (stack.isEmpty()) {
+            xField.setValue("0");
+            zField.setValue("0");
+            nameField.setValue("");
         }
         Component customName = stack.get(DataComponents.CUSTOM_NAME);
         if (customName != null) {
@@ -113,22 +104,19 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, titleLabelX, titleLabelY, 0x4A2E0A, false);
         graphics.drawString(font, "X:", 36, 19, 0x4A2E0A, false);
-        graphics.drawString(font, "Z:", 36, 35, 0x4A2E0A, false);
-        graphics.drawString(font, Component.translatable("mapcompass.label.name"), 36, 50, 0x4A2E0A, false);
+        graphics.drawString(font, "Z:", 36, 33, 0x4A2E0A, false);
+        graphics.drawString(font, Component.translatable("mapcompass.label.name"), 36, 49, 0x4A2E0A, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x4A2E0A, false);
-
-        // Current compass target display (below slot, read-only)
-        if (hasCompassTarget) {
-            graphics.drawString(font, "X: " + compassTargetX, 8, 46, 0x8B5513, false);
-            graphics.drawString(font, "Z: " + compassTargetZ, 8, 56, 0x8B5513, false);
-        }
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (xField.isFocused() || zField.isFocused() || nameField.isFocused()) {
-            if (keyCode == 256) { onClose(); return true; }
-            return super.keyPressed(keyCode, scanCode, modifiers);
+            if (keyCode == 256) { onClose(); return true; } // ESC chiude sempre
+            // Passa il tasto al widget focalizzato, poi consuma l'evento per bloccare
+            // il check dell'inventory key (es. E) in AbstractContainerScreen
+            if (getFocused() != null) getFocused().keyPressed(keyCode, scanCode, modifiers);
+            return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }

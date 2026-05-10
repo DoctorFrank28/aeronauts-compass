@@ -1,0 +1,27 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "mapcompass:navigator_table"
+      }
+    },
+    "has_cartography_table": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": ["minecraft:cartography_table"] }]
+      }
+    },
+    "has_compass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": ["minecraft:compass"] }]
+      }
+    }
+  },
+  "requirements": [["has_the_recipe", "has_cartography_table", "has_compass"]],
+  "rewards": {
+    "recipes": ["mapcompass:navigator_table"]
+  }
+}

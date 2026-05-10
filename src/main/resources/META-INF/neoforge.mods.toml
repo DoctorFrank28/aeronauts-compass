@@ -8,6 +8,7 @@ license = "MIT"
     displayName = "${mod_name}"
     description = '''${mod_description}'''
     authors = "${mod_authors}"
+    logoFile = "aeronautscompass.png"
 
 [[dependencies.mapcompass]]
     modId = "neoforge"

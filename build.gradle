@@ -17,7 +17,7 @@ repositories {
 }
 
 base {
-    archivesName = mod_name.toLowerCase()
+    archivesName = "aeronautscompass"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -38,6 +38,16 @@ runs {
         server()
         systemProperty 'forge.enabledGameTestNamespaces', mod_id
         programArgument '--nogui'
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.ow2.asm:asm:9.7'
+        force 'org.ow2.asm:asm-tree:9.7'
+        force 'org.ow2.asm:asm-analysis:9.7'
+        force 'org.ow2.asm:asm-util:9.7'
+        force 'org.ow2.asm:asm-commons:9.7'
     }
 }
 
