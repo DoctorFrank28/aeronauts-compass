@@ -99,20 +99,23 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     }
 
     private void populateFromCompass(ItemStack stack) {
-        LodestoneTracker tracker = stack.get(DataComponents.LODESTONE_TRACKER);
-        if (tracker != null && tracker.target().isPresent()) {
-            BlockPos pos = tracker.target().get().pos();
-            xField.setValue(String.valueOf(pos.getX()));
-            zField.setValue(String.valueOf(pos.getZ()));
-        } else if (stack.isEmpty()) {
-            xField.setValue("0");
-            zField.setValue("0");
-            nameField.setValue("");
+        // Map has priority: never override X/Z from compass while a map is present
+        boolean mapPresent = !menu.getSlot(1).getItem().isEmpty();
+        if (!mapPresent) {
+            LodestoneTracker tracker = stack.get(DataComponents.LODESTONE_TRACKER);
+            if (tracker != null && tracker.target().isPresent()) {
+                BlockPos pos = tracker.target().get().pos();
+                xField.setValue(String.valueOf(pos.getX()));
+                zField.setValue(String.valueOf(pos.getZ()));
+            } else if (stack.isEmpty()) {
+                xField.setValue("0");
+                zField.setValue("0");
+                nameField.setValue("");
+                return;
+            }
         }
         Component customName = stack.get(DataComponents.CUSTOM_NAME);
-        if (customName != null) {
-            nameField.setValue(customName.getString());
-        }
+        if (customName != null) nameField.setValue(customName.getString());
     }
 
     private void applyCompass() {
