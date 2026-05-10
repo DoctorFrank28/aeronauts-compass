@@ -125,14 +125,15 @@ public class NavigatorTableScreen extends AbstractContainerScreen<NavigatorTable
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        // Ghost hint: render item icon + dark overlay when slot is empty
+        // Ghost hint: icon + parchment overlay (~60% opacity) to simulate transparency
+        // renderFakeItem ignores alpha, so we overlay the bg colour instead
         if (menu.getSlot(0).getItem().isEmpty()) {
             graphics.renderFakeItem(new ItemStack(Items.COMPASS), leftPos + 8, topPos + 26);
-            graphics.fill(leftPos + 8, topPos + 26, leftPos + 24, topPos + 42, 0xA0000000);
+            graphics.fill(leftPos + 8, topPos + 26, leftPos + 24, topPos + 42, 0x99E8D5A3);
         }
         if (menu.getSlot(1).getItem().isEmpty()) {
             graphics.renderFakeItem(new ItemStack(Items.FILLED_MAP), leftPos + 28, topPos + 26);
-            graphics.fill(leftPos + 28, topPos + 26, leftPos + 44, topPos + 42, 0xA0000000);
+            graphics.fill(leftPos + 28, topPos + 26, leftPos + 44, topPos + 42, 0x99E8D5A3);
         }
     }
 
