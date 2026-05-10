@@ -14,10 +14,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.LodestoneTracker;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.List;
 import java.util.Optional;
 
 public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension, String name) implements CustomPacketPayload {
@@ -70,6 +72,12 @@ public record SetCompassPacket(int x, int z, ResourceKey<Level> dimension, Strin
                 ? Component.translatable("mapcompass.item.compass_name", packet.x(), packet.z())
                 : Component.literal(packet.name());
             newCompass.set(DataComponents.CUSTOM_NAME, displayName);
+            newCompass.set(DataComponents.LORE, new ItemLore(List.of(
+                Component.literal("X: " + packet.x() + "  Z: " + packet.z())
+                    .withStyle(s -> s.withColor(0xAAAAAA).withItalic(false)),
+                Component.translatable("mapcompass.lore.reset_hint")
+                    .withStyle(s -> s.withColor(0x777777).withItalic(true))
+            )));
 
             player.setItemInHand(hand, newCompass);
             player.sendSystemMessage(Component.translatable("mapcompass.message.compass_set", packet.x(), packet.z()));

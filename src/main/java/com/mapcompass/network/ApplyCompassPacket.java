@@ -11,9 +11,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.LodestoneTracker;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.List;
 import java.util.Optional;
 
 public record ApplyCompassPacket(BlockPos tablePos, int x, int z, String name) implements CustomPacketPayload {
@@ -61,6 +63,12 @@ public record ApplyCompassPacket(BlockPos tablePos, int x, int z, String name) i
                 ? Component.translatable("mapcompass.item.compass_name", packet.x(), packet.z())
                 : Component.literal(packet.name());
             stack.set(DataComponents.CUSTOM_NAME, displayName);
+            stack.set(DataComponents.LORE, new ItemLore(List.of(
+                Component.literal("X: " + packet.x() + "  Z: " + packet.z())
+                    .withStyle(s -> s.withColor(0xAAAAAA).withItalic(false)),
+                Component.translatable("mapcompass.lore.reset_hint")
+                    .withStyle(s -> s.withColor(0x777777).withItalic(true))
+            )));
 
             inv.setItem(0, stack);
             be.setChanged();
