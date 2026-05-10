@@ -5,9 +5,11 @@ import com.mapcompass.init.ModBlocks;
 import com.mapcompass.init.ModMenuTypes;
 import com.mapcompass.network.ApplyCompassPacket;
 import com.mapcompass.network.SetCompassPacket;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -21,6 +23,13 @@ public class MapCompass {
         ModMenuTypes.MENU_TYPES.register(modEventBus);
 
         modEventBus.addListener(this::registerPackets);
+        modEventBus.addListener(this::addCreativeTab);
+    }
+
+    private void addCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(ModBlocks.NAVIGATOR_TABLE_ITEM.get());
+        }
     }
 
     private void registerPackets(RegisterPayloadHandlersEvent event) {
