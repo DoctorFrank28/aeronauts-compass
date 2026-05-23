@@ -1,0 +1,10 @@
+{
+  "mapcompass.action.set_compass": "设置指南针",
+  "mapcompass.action.apply": "应用",
+  "mapcompass.message.compass_set": "指南针目标设为 X: %d, Z: %d",
+  "mapcompass.message.no_compass": "你必须首先手上拿个指南针！",
+  "mapcompass.item.compass_name": "指南针指向 [X: %d, Z: %d]",
+  "mapcompass.label.name": "名称",
+  "block.mapcompass.navigator_table": "导航台",
+  "mapcompass.lore.reset_hint": "放入工作台中合成以重置"
+}
